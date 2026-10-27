@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-outfit: "Outfit", sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+  --font-cinzel: "Cinzel", serif;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+
+  --color-bananur-cream: #F9FAFB;         /* Gris claro neutro impecable de fondo */
+  --color-bananur-sand: #E4E4E7;          /* Gris claro moderno */
+  --color-bananur-clay: #14532D;          /* Verde bosque profundo y elegante */
+  --color-bananur-clay-light: #166534;    /* Verde follaje equilibrado */
+  --color-bananur-gold: #15803D;          /* Verde vivo */
+  --color-bananur-gold-dark: #166534;     /* Verde medio */
+  --color-bananur-yellow: #FACC15;        /* Amarillo sol brillante */
+  --color-bananur-coral: #EF4444;         /* Rojo coral para alertas */
+  --color-bananur-sage: #22C55E;          /* Verde primavera súper vivo */
+  --color-bananur-sage-light: #F0FDF4;    /* Verde muy claro / blanco grisáceo */
+  --color-bananur-slate: rgba(22, 101, 52, 0.08); /* Verde translúcido */
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bananur-cream);
+    color: var(--color-bananur-clay);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    scrollbar-gutter: stable;
+  }
+
+  h1, h2, h3, h4, .font-serif-brand {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Custom utility styles for refined branding */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(45, 37, 34, 0.08);
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

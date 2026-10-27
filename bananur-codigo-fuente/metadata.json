@@ -1,0 +1,6 @@
+{
+  "name": "Bananur",
+  "description": "Boutique de diseño y branding Bananur. Modernización de marca con catálogo de productos de diseño, cotizador interactivo, portafolio de proyectos y panel de administración.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

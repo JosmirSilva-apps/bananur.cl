@@ -1,0 +1,113 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Bootstrapped admin check including runtime user email
+    function isAdmin() {
+      return isVerified() && (
+        request.auth.token.email == 'bananur.cl@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Connection test rule (read-only for authenticated and public ping)
+    match /test/{testId} {
+      allow read: if isValidId(testId);
+    }
+
+    // Admins registry
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Orders Collection
+    function isValidOrder(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
+        && data.customerEmail is string && data.customerEmail.size() > 0 && data.customerEmail.size() <= 100
+        && data.total is number && data.total >= 0
+        && data.status is string && data.status.size() <= 50;
+    }
+
+    match /orders/{orderId} {
+      allow get: if isValidId(orderId) && (isAdmin() || (isSignedIn() && resource.data.customerEmail == request.auth.token.email));
+      allow list: if isAdmin();
+      allow create: if isValidId(orderId) && isValidOrder(incoming());
+      allow update: if isValidId(orderId) && isValidOrder(incoming()) && isAdmin();
+      allow delete: if isValidId(orderId) && isAdmin();
+    }
+
+    // Products Collection
+    function isValidProduct(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 120
+        && data.price is number && data.price >= 0
+        && data.category is string && data.category.size() <= 60
+        && data.stock is number;
+    }
+
+    match /products/{productId} {
+      allow read: if isValidId(productId);
+      allow create, update, delete: if isValidId(productId) && isAdmin() && (request.method == 'delete' || isValidProduct(incoming()));
+    }
+
+    // Consultations Collection
+    function isValidConsultation(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.clientName is string && data.clientName.size() > 0 && data.clientName.size() <= 100
+        && data.clientEmail is string && data.clientEmail.size() > 0 && data.clientEmail.size() <= 100
+        && data.serviceType is string && data.serviceType.size() <= 100
+        && data.date is string && data.date.size() <= 50
+        && data.time is string && data.time.size() <= 20
+        && data.status is string && data.status.size() <= 50;
+    }
+
+    match /consultations/{consultationId} {
+      allow get: if isValidId(consultationId) && (isAdmin() || (isSignedIn() && resource.data.clientEmail == request.auth.token.email));
+      allow list: if isAdmin();
+      allow create: if isValidId(consultationId) && isValidConsultation(incoming());
+      allow update: if isValidId(consultationId) && isValidConsultation(incoming()) && isAdmin();
+      allow delete: if isValidId(consultationId) && isAdmin();
+    }
+
+    // Workstations Collection
+    function isValidWorkstation(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.type is string && data.type.size() <= 50
+        && data.active is bool;
+    }
+
+    match /workstations/{workstationId} {
+      allow read: if isValidId(workstationId);
+      allow create, update, delete: if isValidId(workstationId) && isAdmin() && (request.method == 'delete' || isValidWorkstation(incoming()));
+    }
+  }
+}

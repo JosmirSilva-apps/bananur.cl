@@ -1,0 +1,86 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase order for boutique products and custom 3D/textile items",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerEmail": { "type": "string", "format": "email", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "address": { "type": "string", "maxLength": 200 },
+        "commune": { "type": "string", "maxLength": 100 },
+        "city": { "type": "string", "maxLength": 100 },
+        "subtotal": { "type": "number" },
+        "shippingFee": { "type": "number" },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["Pendiente", "En preparación", "Enviado", "Entregado", "Cancelado"] },
+        "date": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "customerName", "customerEmail", "total", "status"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Store items including 3D prints, fine sewing, stationery, and crochet",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "price": { "type": "number" },
+        "category": { "type": "string", "maxLength": 60 },
+        "stock": { "type": "number" },
+        "featured": { "type": "boolean" }
+      },
+      "required": ["id", "name", "price", "category", "stock"]
+    },
+    "Consultation": {
+      "title": "Consultation",
+      "description": "Branding, UX and digital quoting appointments scheduled with Bananur studio",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "clientName": { "type": "string", "maxLength": 100 },
+        "clientEmail": { "type": "string", "format": "email", "maxLength": 100 },
+        "serviceType": { "type": "string", "maxLength": 100 },
+        "date": { "type": "string", "maxLength": 50 },
+        "time": { "type": "string", "maxLength": 20 },
+        "status": { "type": "string", "enum": ["Confirmada", "Pendiente", "Realizada", "Cancelada"] }
+      },
+      "required": ["id", "clientName", "clientEmail", "serviceType", "date", "time", "status"]
+    },
+    "Workstation": {
+      "title": "Workstation",
+      "description": "Craft and industrial workshop workstation configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "type": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "maxLength": 50 },
+        "active": { "type": "boolean" },
+        "assignedOperator": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "name", "type", "active"]
+    }
+  },
+  "firestore": {
+    "/orders/{orderId}": {
+      "schema": { "$ref": "entities/Order" },
+      "description": "Orders created by clients or POS administrators"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "entities/Product" },
+      "description": "Catalog items and inventory"
+    },
+    "/consultations/{consultationId}": {
+      "schema": { "$ref": "entities/Consultation" },
+      "description": "Design appointments and schedule slots"
+    },
+    "/workstations/{workstationId}": {
+      "schema": { "$ref": "entities/Workstation" },
+      "description": "Taller manufacturing workstations"
+    }
+  }
+}
